@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from "react"
 import Link from "next/link"
+import BookCover from "@/components/BookCover"
+import { useSearchParams } from "next/navigation"
 import { Plus, Search, Pencil, Trash2, BookOpen } from "lucide-react"
 import {
   Loading, ErrorBox, Modal, inputClass,
@@ -42,16 +44,17 @@ const emptyForm: BookForm = {
   title:"", description:"", isbn:"", publishedYear:"",
   genre:"Novela", pages:"", authorId:""
 }
-const genres = ["Novela","Cuento","Poesía","Ensayo","Historia","Ciencia","Fantasía","Otro"]
+const genres = ["Novela","Cuento","Poesía","Ensayo","Historia","Ciencia","Fantasía","Romance","Biografía","Infantil","Otro"]
 
 export default function BooksPage() {
+  const searchParams = useSearchParams()
   const [books, setBooks] = useState<Book[]>([])
   const [authors, setAuthors] = useState<Author[]>([])
   const [pagination, setPagination] = useState<PaginationData>({
     page:1,limit:6,total:0,totalPages:0,hasNext:false,hasPrev:false
   })
-  const [search, setSearch] = useState("")
-  const [genre, setGenre] = useState("")
+  const [search, setSearch] = useState(searchParams.get("search") || "")
+  const [genre, setGenre] = useState(searchParams.get("genre") || "")
   const [authorId, setAuthorId] = useState("")
   const [sortBy, setSortBy] = useState("createdAt")
   const [order, setOrder] = useState("desc")
@@ -63,6 +66,12 @@ export default function BooksPage() {
   const [form, setForm] = useState<BookForm>(emptyForm)
   const [saving, setSaving] = useState(false)
   const [refresh, setRefresh] = useState(0)
+
+  useEffect(() => {
+    setSearch(searchParams.get("search") || "")
+    setGenre(searchParams.get("genre") || "")
+    setPage(1)
+  }, [searchParams])
 
   useEffect(() => {
     async function getAuthors() {
@@ -169,7 +178,7 @@ export default function BooksPage() {
     <div className="flex flex-wrap items-center justify-between gap-4">
       <div>
         <p className="text-sm font-semibold text-violet-600">CATÁLOGO DIGITAL</p>
-        <h1 className="mt-1 text-3xl font-black">Biblioteca de Libros</h1>
+        <h1 className="mt-1 text-3xl font-black">Explora nuestra biblioteca</h1>
         <p className="mt-1 text-sm text-slate-500">
           Busca, filtra y administra tu colección.
         </p>
@@ -179,12 +188,12 @@ export default function BooksPage() {
       </button>
     </div>
 
-    <div className="rounded-2xl bg-gradient-to-r from-indigo-700 to-violet-700 p-6 text-white">
+    <div className="rounded-2xl bg-[#f4f1e7] border border-[#ded6c3] p-6 text-white">
       <div className="flex items-center gap-3">
-        <BookOpen size={30}/>
+        <BookOpen size={30} className="text-[#3269b2]"/>
         <div>
-          <h2 className="text-xl font-bold">Explora tu colección</h2>
-          <p className="text-sm text-indigo-100">
+          <h2 className="library-heading text-xl font-bold text-[#302e28]">Explora tu colección</h2>
+          <p className="text-sm text-[#625e53]">
             Búsqueda avanzada conectada con Prisma y PostgreSQL.
           </p>
         </div>
@@ -235,8 +244,12 @@ export default function BooksPage() {
     {loading ? <Loading/> : (
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {books.map(b=><div key={b.id} className={`${cardClass} flex flex-col`}>
-          <div className="mb-4 flex h-32 items-center justify-center rounded-xl bg-gradient-to-br from-violet-100 to-blue-100">
-            <BookOpen size={46} className="text-violet-600"/>
+          <div className="mb-4 flex h-56 items-center justify-center rounded-lg bg-[#f4f1e8] p-3">
+            <BookCover
+              isbn={b.isbn}
+              title={b.title}
+              className="h-full w-36"
+            />
           </div>
           <span className="mb-2 self-start rounded-full bg-violet-100 px-3 py-1 text-xs font-semibold text-violet-700">
             {b.genre||"Sin género"}

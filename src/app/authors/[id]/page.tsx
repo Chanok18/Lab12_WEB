@@ -131,16 +131,16 @@ export default function AuthorDetailsPage() {
       <ArrowLeft size={16}/> Volver al dashboard
     </button>
 
-    <div className="rounded-2xl bg-gradient-to-r from-violet-700 to-indigo-800 p-7 text-white">
+    <div className="rounded-2xl bg-[#f4f1e7] border border-[#ded6c3] p-7 text-[#302e28]">
       <div className="flex flex-wrap items-start gap-5">
-        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 text-3xl font-black">
+        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#ded7c5] text-3xl font-black">
           {author.name.slice(0,2).toUpperCase()}
         </div>
         <div className="flex-1">
-          <p className="text-xs font-semibold text-violet-200">PERFIL DEL AUTOR</p>
+          <p className="text-xs font-semibold text-[#3269b2]">PERFIL DEL AUTOR</p>
           <h1 className="mt-1 text-3xl font-black">{author.name}</h1>
-          <p className="mt-2 text-sm text-violet-100">{author.email}</p>
-          <p className="mt-1 text-sm text-violet-100">
+          <p className="mt-2 text-sm text-[#625e53]">{author.email}</p>
+          <p className="mt-1 text-sm text-[#625e53]">
             {author.nationality||"Nacionalidad no indicada"}
             {author.birthYear?` · Nació en ${author.birthYear}`:""}
           </p>
@@ -150,7 +150,7 @@ export default function AuthorDetailsPage() {
           <Pencil size={16}/> Editar autor
         </button>
       </div>
-      <p className="mt-5 max-w-3xl text-sm text-violet-100">
+      <p className="mt-5 max-w-3xl text-sm text-[#625e53]">
         {author.bio||"Este autor todavía no tiene una biografía registrada."}
       </p>
     </div>

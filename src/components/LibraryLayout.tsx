@@ -1,92 +1,114 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { useState, type FormEvent, type ReactNode } from "react"
 import {
-  BookOpen, LayoutDashboard, LibraryBig,
-  Code2, GraduationCap
+  BookOpen, Search, Menu, LibraryBig,
+  Users, X
 } from "lucide-react"
-import type { ReactNode } from "react"
 
 export default function LibraryLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
+  const [search, setSearch] = useState("")
+  const [menuOpen, setMenuOpen] = useState(false)
 
-  const links = [
-    { href: "/", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/books", label: "Biblioteca", icon: LibraryBig },
-  ]
+  function submitSearch(e: FormEvent) {
+    e.preventDefault()
+    router.push(`/books?search=${encodeURIComponent(search)}`)
+    setMenuOpen(false)
+  }
 
   return (
-    <div className="min-h-screen bg-[#f5f7fc] text-slate-900">
-      <div className="flex min-h-screen flex-col lg:flex-row">
-        <aside className="flex w-full flex-col bg-[#11182e] text-white lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:shrink-0">
-          <div className="flex items-center gap-3 border-b border-white/10 p-6">
-            <div className="rounded-xl bg-violet-600 p-3">
-              <BookOpen size={24} />
-            </div>
-            <div>
-              <h1 className="text-xl font-black">BookSpace</h1>
-              <p className="text-xs text-slate-400">Sistema de Biblioteca</p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#e7e5d5] text-[#302e28]">
+      <div className="bg-[#37352c] text-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-2 text-xs">
+          <span className="flex items-center gap-2 font-semibold tracking-wide">
+            <BookOpen size={15} /> BOOKSPACE DIGITAL LIBRARY
+          </span>
+          <span>TECSUP · Laboratorio 12</span>
+        </div>
+      </div>
 
-          <nav className="flex gap-2 p-4 lg:flex-col">
-            {links.map(link => {
-              const active = link.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(link.href)
+      <header className="border-b border-[#d5d0bd] bg-[#e7e5d5]">
+        <div className="mx-auto flex max-w-7xl items-center gap-4 px-5 py-5">
+          <Link href="/" className="flex shrink-0 items-center gap-2">
+            <span className="rotate-[-7deg] rounded bg-[#3268ad] px-2 py-1 text-sm font-black text-white">
+              BOOK
+            </span>
+            <span className="font-serif text-2xl tracking-tight text-[#26251f]">
+              SPACE
+            </span>
+          </Link>
 
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
-                    active
-                      ? "bg-violet-600 text-white"
-                      : "text-slate-300 hover:bg-white/10"
-                  }`}
-                >
-                  <link.icon size={19} />
-                  {link.label}
-                </Link>
-              )
-            })}
+          <nav className="ml-5 hidden items-center gap-6 text-sm lg:flex">
+            <Link href="/" className={pathname === "/" ? "font-bold text-[#285e9c]" : "hover:text-[#285e9c]"}>
+              Inicio
+            </Link>
+            <Link href="/books" className={pathname.startsWith("/books") ? "font-bold text-[#285e9c]" : "hover:text-[#285e9c]"}>
+              Explorar libros
+            </Link>
+            <Link href="/#autores" className="hover:text-[#285e9c]">
+              Autores
+            </Link>
           </nav>
 
-          <div className="mt-auto hidden p-5 lg:block">
-            <div className="rounded-xl bg-white/5 p-4">
-              <GraduationCap className="mb-2 text-violet-300" />
-              <p className="text-sm font-semibold">Laboratorio 12</p>
-              <p className="mt-1 text-xs text-slate-400">
-                Next.js + Prisma + PostgreSQL
-              </p>
-            </div>
-            <a
-              href="https://github.com/Chanok18"
-              target="_blank"
-              rel="noreferrer"
-              className="mt-5 flex items-center gap-2 text-xs text-slate-400"
-            >
-              <Code2 size={15} /> Kevin Quispe · TECSUP
-            </a>
-          </div>
-        </aside>
+          <form onSubmit={submitSearch} className="ml-auto hidden max-w-sm flex-1 items-center overflow-hidden rounded-lg border border-[#d1cbb7] bg-white md:flex">
+            <input
+              aria-label="Buscar libros"
+              placeholder="Buscar libros..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="min-w-0 flex-1 px-4 py-2.5 text-sm outline-none"
+            />
+            <button aria-label="Buscar" className="px-3 text-[#8c8777]">
+              <Search size={20} />
+            </button>
+          </form>
 
-        <main className="min-w-0 flex-1">
-          <header className="flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4 md:px-8">
-            <div>
-              <p className="text-sm font-bold text-violet-600">BookSpace</p>
-              <p className="text-xs text-slate-500">Gestión inteligente de biblioteca</p>
+          <Link href="/books" className="hidden rounded-lg bg-[#3269b2] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#24518e] sm:block">
+            Mi biblioteca
+          </Link>
+
+          <button
+            aria-label="Abrir menú"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="ml-auto rounded-md p-2 hover:bg-[#d8d5c6] md:ml-0"
+          >
+            {menuOpen ? <X size={23} /> : <Menu size={23} />}
+          </button>
+        </div>
+
+        {menuOpen && (
+          <div className="mx-auto max-w-7xl border-t border-[#d5d0bd] px-5 py-4">
+            <div className="flex flex-wrap gap-4 text-sm">
+              <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center gap-2">
+                <Users size={16} /> Autores
+              </Link>
+              <Link href="/books" onClick={() => setMenuOpen(false)} className="flex items-center gap-2">
+                <LibraryBig size={16} /> Catálogo
+              </Link>
+              <a href="https://github.com/Chanok18" target="_blank" rel="noreferrer">
+                GitHub del proyecto
+              </a>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 font-bold text-violet-700">
-              KQ
-            </div>
-          </header>
-          <div className="mx-auto max-w-7xl p-5 md:p-8">
-            {children}
           </div>
-        </main>
-      </div>
+        )}
+      </header>
+
+      <main className="mx-auto min-h-[75vh] max-w-7xl px-3 py-5 sm:px-5">
+        <div className="rounded-xl border border-[#d6d0bc] bg-white p-5 shadow-sm md:p-8">
+          {children}
+        </div>
+      </main>
+
+      <footer className="mt-8 border-t border-[#d5d0bd] py-6 text-center text-xs text-[#716d60]">
+        BookSpace · Biblioteca digital · Kevin Quispe · TECSUP
+        <div className="mt-2">
+          Portadas proporcionadas por Open Library
+        </div>
+      </footer>
     </div>
   )
 }

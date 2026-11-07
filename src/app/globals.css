@@ -24,3 +24,54 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* BookSpace - estilo biblioteca clásica */
+:root {
+  --library-cream: #e7e5d5;
+  --library-paper: #f6f4ed;
+  --library-ink: #302e28;
+  --library-blue: #3269b2;
+}
+
+body {
+  background: var(--library-cream);
+  color: var(--library-ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.02em;
+}
+
+.library-heading {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600;
+}
+
+.library-shelf {
+  border: 1px solid #d8d0b9;
+  background: #f7f5ed;
+  border-radius: 12px;
+}
+
+.library-cover {
+  box-shadow: 3px 5px 10px #00000025;
+  transition: transform .2s ease;
+}
+
+.library-cover:hover {
+  transform: translateY(-5px);
+}
+
+.library-blue-button {
+  background: #3269b2;
+  color: white;
+  border-radius: 7px;
+  padding: 9px 15px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.library-blue-button:hover {
+  background: #24518e;
+}

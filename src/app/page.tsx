@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from "react"
 import Link from "next/link"
+import LibraryShowcase from "@/components/LibraryShowcase"
 import {
   Users, BookOpen, Globe2, Plus, Pencil,
   Trash2, ArrowUpRight, RefreshCw
@@ -30,12 +31,22 @@ type AuthorForm = {
   birthYear: string
 }
 
+type FeaturedBook = {
+  id: string
+  title: string
+  isbn: string
+  genre: string | null
+  authorId: string
+  author: { name: string }
+}
+
 const emptyForm: AuthorForm = {
   name: "", email: "", bio: "", nationality: "", birthYear: ""
 }
 
 export default function HomePage() {
   const [authors, setAuthors] = useState<Author[]>([])
+  const [featuredBooks, setFeaturedBooks] = useState<FeaturedBook[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [modal, setModal] = useState(false)
@@ -59,6 +70,15 @@ export default function HomePage() {
   }, [])
 
   useEffect(() => { void load() }, [load])
+
+  useEffect(() => {
+    fetch("/api/books/search?limit=8")
+      .then(res => res.ok ? res.json() : null)
+      .then(result => {
+        if (result?.data) setFeaturedBooks(result.data)
+      })
+      .catch(() => {})
+  }, [])
 
   function openCreate() {
     setEditing(null)
@@ -118,11 +138,11 @@ export default function HomePage() {
   const countries = new Set(authors.map(a => a.nationality).filter(Boolean)).size
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-9">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-sm font-semibold text-violet-600">PANEL PRINCIPAL</p>
-          <h1 className="mt-1 text-3xl font-black">Dashboard de Biblioteca</h1>
+          <h1 className="mt-1 text-3xl font-black">Gestión de autores</h1>
           <p className="mt-1 text-sm text-slate-500">Administra autores, libros y estadísticas.</p>
         </div>
         <button onClick={openCreate} className={buttonClass}>
@@ -130,7 +150,7 @@ export default function HomePage() {
         </button>
       </div>
 
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-700 via-indigo-700 to-[#142347] p-7 text-white">
+      <div className="hidden relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-700 via-indigo-700 to-[#142347] p-7 text-white">
         <div className="absolute right-8 top-5 text-6xl opacity-80">📚</div>
         <h2 className="relative max-w-lg text-2xl font-bold">Bienvenido a BookSpace</h2>
         <p className="relative mt-2 max-w-lg text-sm text-violet-100">
@@ -140,6 +160,8 @@ export default function HomePage() {
           Explorar libros <ArrowUpRight size={16} />
         </Link>
       </div>
+
+      <LibraryShowcase books={featuredBooks} />
 
       <div className="grid gap-4 sm:grid-cols-3">
         {[
@@ -157,7 +179,7 @@ export default function HomePage() {
         ))}
       </div>
 
-      <div className={cardClass}>
+      <div id="autores" className={cardClass}>
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-bold">Gestión de autores</h2>
